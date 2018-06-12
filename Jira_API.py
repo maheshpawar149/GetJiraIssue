@@ -54,12 +54,15 @@ def main():
   	# 			}],
 
 			data={"body": "Request Processed for %s,%s,%s,%s,%s,%s,%s"%(UserName,Usermail,GroupName,RequestType,statusVal,DurationValue,EnvValue),
-					"visibility": {
-						"type": "role",
-						"value": "Administrators"
-						}
+					#"visibility": {
+						#"type": "role",
+						#"value": "Administrators"
+						#}
 					}
 			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/comment',headers=headers,data=json.dumps(data)); #auth=auth
+			
+			data "{\"transition\": {\"id\": \"81\"}}"
+			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/transitions?expand=transitions.fields',headers=headers,data=json.dumps(data)); #auth=auth
 			
 			
 
