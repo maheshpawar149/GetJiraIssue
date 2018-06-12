@@ -3,7 +3,8 @@ import requests,json;
 
 
 def main():
-	Jira_Tickets=["EAP-3","EAP-4","EAP-5","EAP-6","EAP-7"];
+	#Jira_Tickets=["EAP-3","EAP-4","EAP-5","EAP-6","EAP-7"];
+	Jira_Tickets=["CEA-1","CEA-6","CEA-7","CEA-8","CEA-9","CEA-10","CEA-11","CEA-12",];
 
 	for i in range(len(Jira_Tickets)):
 		headers={'Authorization':'Basic YWRtaW46Qm9uZUJvbmUxJA=='}
