@@ -21,8 +21,10 @@ def main():
 		
 		if (statusVal=="Request In Execution"):
 			print "Request Found";
-			UserName=str(json_data['fields']['creator']['name']);
-			Usermail=str(json_data['fields']['creator']['emailAddress']);
+			#UserName=str(json_data['fields']['creator']['name']);
+			#Usermail=str(json_data['fields']['creator']['emailAddress']);
+			UserName=str(json_data['fields']['customfield_10206']['name']);
+			Usermail=str(json_data['fields']['customfield_10206']['emailAddress']);
 			GroupName=str(json_data['fields']['customfield_10209']['name']);
 			RequestType=str(json_data['fields']['issuetype']['name']);
 			DurationValue=str(json_data['fields']['customfield_10207']);
