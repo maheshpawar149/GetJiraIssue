@@ -52,7 +52,7 @@ def main():
 
 			headers={'Authorization':'Basic YWRtaW46Qm9uZUJvbmUxJA==','content-type' : 'application/json'} 
 
-			data={"body": "Request Processed for %s,%s,%s,%s,%s,%s,%s"%(UserName,Usermail,GroupName,RequestType,statusVal,DurationValue,EnvValue),}
+			data={"body": "SUCCESS!!!Request Processed for %s,%s,%s,%s,%s,%s,%s"%(UserName,Usermail,GroupName,RequestType,statusVal,DurationValue,EnvValue),}
 			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/comment',headers=headers,data=json.dumps(data)); #auth=auth
 			
 			##ifSuccess
@@ -62,7 +62,7 @@ def main():
 			#data={"transition": {"id":"131"}}
 			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/transitions?expand=transitions.fields',headers=headers,data=json.dumps(data)); #auth=auth
 			
-			print response;
+			print response.content;
 
 		#else:
 			#print "No request Found in Jira Project!!!."
