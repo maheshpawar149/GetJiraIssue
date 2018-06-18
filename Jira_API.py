@@ -8,7 +8,7 @@ def main():
 
 	for i in range(len(Jira_Tickets)):
 		headers={'Authorization':'Basic YWRtaW46Qm9uZUJvbmUxJA=='}
-		response = requests.get('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i],headers=headers);
+		response = requests.get('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'?expand=changelog',headers=headers);
 	
 		json_data=json.loads(response.content);
 
@@ -20,11 +20,17 @@ def main():
 		statusVal=json_data['fields']['status']['name']
 		
 		if (statusVal=="Request In Execution"):
+		#if (statusVal=="Environment in Use"):
+			
 			print "Request Found";
 			#UserName=str(json_data['fields']['creator']['name']);
 			#Usermail=str(json_data['fields']['creator']['emailAddress']);
-			UserName=str(json_data['fields']['customfield_10206']['name']);
-			Usermail=str(json_data['fields']['customfield_10206']['emailAddress']);
+			#UserName=str(json_data['fields']['customfield_10206']['name']);
+			#Usermail=str(json_data['fields']['customfield_10206']['emailAddress']);
+			print "LENGTH"
+			log_length=len(json_data['changelog']['histories']);
+			UserName=str(json_data['changelog']['histories'][log_length-1]['author']['name']);
+			Usermail=str(json_data['changelog']['histories'][log_length-1]['author']['emailAddress']);
 			GroupName=str(json_data['fields']['customfield_10209']['name']);
 			RequestType=str(json_data['fields']['issuetype']['name']);
 			DurationValue=str(json_data['fields']['customfield_10207']);
