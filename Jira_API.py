@@ -1,95 +1,93 @@
-import glob,os,base64,requests
+import sys;
+import requests,json;
 
-def GetUserPass():
-	from cryptography.fernet import Fernet
-	with open("ConflConfig.json",mode="r") as userFile:
-		data=userFile.read().splitlines();
-	#For member User
-	cipher_key=data[0];
-	encrypted_text=data[1];
+
+def main():
+	#Jira_Tickets=["EAP-3","EAP-4","EAP-5","EAP-6","EAP-7"];
+	Jira_Tickets=["CEA-1","CEA-6","CEA-7","CEA-8","CEA-9","CEA-10","CEA-11","CEA-12",];
+
+	for i in range(len(Jira_Tickets)):
+		headers={'Authorization':'Basic YWRtaW46Qm9uZUJvbmUxJA=='}
+		response = requests.get('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i],headers=headers);
 	
-	cipher = Fernet(cipher_key)
-	decrypted_text = cipher.decrypt(encrypted_text)
-	userpass=base64.b64encode(decrypted_text);	
-	return userpass;
+		json_data=json.loads(response.content);
 
-#for infile in glob.glob(os.path.join('Logs/*.txt'))
-files =glob.glob('Logs/*');
-files.sort(key=os.path.getmtime);
-#print (files);
-#print files[0]
-#print("\n".join(files))
+		#for i in json_data:
+			#print ("%s: %s" % (i,json_data[i]))
 
-##Reading File
-# with open(files[0]) as f:
-# 	for line in f:
-# 		print line.strip()
-
-# f=open(files[0]);
-# #next=f.read(1)
-# next =f.readline();
-# while next!="":
-# 	print (next)
-# 	next=f.readline();
-print files[0];
-in_file=open(files[0],'r')
-
-fileData=[];
-contents=in_file.readlines();
-print contents;
-
-
-nowEnvStr="- CLSNOW ENV SPACE USAGE";
-nowCoreDBStr="- CLSNOW CORDB SPACE USAGE";
-nowCoreDBLogStr="- CLSNOW CORDBLOG SPACE USAGE";
-nowEnvDataL=[];nowCoreDBDataL=[];nowCoreDBLogDataL=[];
-for i in range(len(contents)):
-	fileData.append(contents[i].strip('\n'))
-	
-in_file.close()
-
-for i in range(len(fileData)):
-	try:
-		if nowEnvStr in fileData[i]:		
-			i=i+4;		
-			while fileData[i]!="":			
-				nowEnvDataL.append(fileData[i]);
-				i=i+1;
 		
-		if nowCoreDBStr in fileData[i]:
-			i=i+4;	
-			while fileData[i]!="":
-				nowCoreDBDataL.append(fileData[i]);
-				i=i+1;
+		print Jira_Tickets[i];
+		statusVal=json_data['fields']['status']['name']
+		
+		if (statusVal=="Request In Execution"):
+			print "Request Found";
+			UserName=str(json_data['fields']['creator']['name']);
+			Usermail=str(json_data['fields']['creator']['emailAddress']);
+			GroupName=str(json_data['fields']['customfield_10209']['name']);
+			RequestType=str(json_data['fields']['issuetype']['name']);
+			DurationValue=str(json_data['fields']['customfield_10207']);
+			EnvValue=str(json_data['fields']['customfield_10208']['value']);
+			
+			print "+++++++++++++++++++++++++++++++++++++++++++++"
+			print UserName;
+			print Usermail;
+			print GroupName;
+			print RequestType;
+			print statusVal;
+			print DurationValue;
+			print EnvValue;			
+			print "+++++++++++++++++++++++++++++++++++++++++++++"
+			print "CALL 'ENVAllocation_Script.py' HERE with above parameters!!!";
 
-		if nowCoreDBLogStr in fileData[i]:
-			i=i+4;	
-	 		while fileData[i]!="":
-	 			nowCoreDBLogDataL.append(fileData[i]);
-	 			i=i+1;
+			print "Result of the Script passes to JiraComments";
+			#print "Request Processed for %s,%s,%s,%s,%s,%s,%s"%(UserName,Usermail,GroupName,RequestType,statusVal,DurationValue,EnvValue);
 
-	except IndexError as e:
-		pass
-	
-print "nowEnvDataL"; print "*************";print nowEnvDataL;
-print "nowCoreDBDataL"; print "*************";print nowCoreDBDataL;
-print "nowCoreDBLogDataL"; print "*************";print nowCoreDBLogDataL;
+			headers={'Authorization':'Basic YWRtaW46Qm9uZUJvbmUxJA==','content-type' : 'application/json'} 
 
-#print nowEnvDataL;
-#for i in len(nowEnvDataL):
+			data={"body": "Request Processed for %s,%s,%s,%s,%s,%s,%s"%(UserName,Usermail,GroupName,RequestType,statusVal,DurationValue,EnvValue),}
+			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/comment',headers=headers,data=json.dumps(data)); #auth=auth
+			
+			##ifSuccess
+			#data={ "update": {"comment": [ { "add": {"body": "Testing."} }]},"fields": {}, "transition": { "id": "21" }}
+			data={"transition": {"id":"201"}}
+			#IfError
+			#data={"transition": {"id":"131"}}
+			response = requests.post('http://10.20.2.237:8181/rest/api/2/issue/'+Jira_Tickets[i]+'/transitions?expand=transitions.fields',headers=headers,data=json.dumps(data)); #auth=auth
+			
+			print response;
 
-##Reading & updating Excel
-userpass=GetUserPass();
-urlIP= 'http://10.20.3.112:8091';
-headers={'Authorization':'Basic %s'% userpass }
-filePath="CLSNow_Dev_Environment_Allocation_Status.xlsx";
-response = requests.get(urlIP+'/download/attachments/917506/'+filePath,headers=headers);
+		#else:
+			#print "No request Found in Jira Project!!!."
 
-# print fileData[0:3];
-# print "CLSNOW Env:"
-# print fileData[5:11];
-# print "CLSNOW CoreDB:"
-# print fileData[17:23];
-# print "CLSNOW CoreDBLog"
-# print fileData[29:35];
 
+
+main();
+##***End of File***
+
+
+    			#"update": {"comment": [{"add": {"body": "Bug has been fixed"}}]},
+    			#"fields": {"resolution": {"name": "Fixed"}},
+
+#data={"transition": {"id": "4"}}
+			#data={"update":{"comment":[{"add":{"body": "ADDED Comment REST"}}]}, "fields":{"transition":{"id": "4"}}}
+			#data={"update":{"comment":[{"add":{"body": "ADDED Comment REST"}}]}, "transition":{"id": "4"}}
+			##{ "customfield_10000": "Some appropriate value for the Server field" },
+			#data=data={"fields":{"transition":{"id": "4"}}}
+
+
+#"visibility": {
+						#"type": "role",
+						#"value": "Administrators"
+						#}
+
+
+#'X-Atlassian-Token': 'nocheck',
+					#,'content-type': 'application/json'}
+			#headers = {'content-type' : 'application/json'}
+			#data={"body": "TEST Comment",}
+			# data=[ {"body": "TEST Comment",
+  	# 			"visibility": {
+  	# 				 "type": "role",
+  	# 				 "value": "Administrators"
+  	# 				 }
+  	# 			}],
