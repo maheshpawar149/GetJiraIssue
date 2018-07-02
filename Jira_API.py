@@ -23,13 +23,13 @@ def updatejira(Jira_Tickets,dataC,dataD,dataT):
 
 	##for comments
 	if (dataC!=""):
-		print "here comment"
+		#print "here comment"
 		response = requests.post(server+'/rest/api/2/issue/'+Jira_Tickets+'/comment',headers=headers,data=dataC);
 		#print response.content;
 		
 	##for transition
 	if (dataT!=""):
-		print "here trans"
+		#print "here trans"
 		response = requests.post(server+'/rest/api/2/issue/'+Jira_Tickets+'/transitions?expand=transitions.fields',headers=headers,data=dataT);
 		#print response.content;
 	
@@ -67,7 +67,7 @@ def main():
 
 		elif (statusVal=="Request In Execution"):
 			print "Request Found";			
-			success=False;
+			success=True;
 			if(success==True):
 				dataC={"body": "||{color:#008000}START USING ENV(/){color}||\n\n FROM: %s,%s,\nENV: %s\nFOR:%s hrs"%(UserName,GroupName,EnvValue,DurationValue),}
 				dataD={"update": {"description": [{"set": "||{color:#008000}REQUEST APPROVED START USING ENV(/){color}||\n\n |h5. FROM: | |h6. %s,%s,|\n|h5. ENV: | |h6. %s|\n|h5. FOR: | |h6. %s hrs|"%(UserName,GroupName,EnvValue,DurationValue),}]}}
