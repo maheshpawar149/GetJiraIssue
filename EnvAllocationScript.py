@@ -169,7 +169,7 @@ def saveENVReqExcel1(workbook2):
 	file.close();			
 	
 def catSelection(serverRequest):
-	if (serverRequest in["CLSNOW","CCP","SANCTION","TEST"]):
+	if (serverRequest in["CLSNOW","CCP","SANCTIONS","TEST"]):
 		ReqPrio="CatAllocate";
 		#print "--IN CAT Section";
 		if (serverRequest =="CLSNOW"):
@@ -178,8 +178,8 @@ def catSelection(serverRequest):
 		elif (serverRequest =="CCP"):
 			#print "---IN CAT CCP"
 			serverRequest=["CUT05"];
-		elif (serverRequest =="SANCTION"):
-			#print "---IN CAT SANCTION"
+		elif (serverRequest =="SANCTIONS"):
+			#print "---IN CAT SANCTIONS"
 			serverRequest=["CUT02"];
 		elif (serverRequest =="TEST"):
 			#print "---IN CAT TEST"
@@ -312,7 +312,7 @@ def allocateENV(Jira_Ticket,memVal,teamVal,envVal,durVal,timezone,servers,ReqPri
 			print serverRequest;
 			##Here catsel code
 			
-			if (serverRequest in["CLSNOW","CCP","SANCTION","TEST"]):
+			if (serverRequest in["CLSNOW","CCP","SANCTIONS","TEST"]):
 				ReqPrio="CatAllocate";
 				#print "--IN CAT Section";
 				if (serverRequest =="CLSNOW"):
@@ -321,8 +321,8 @@ def allocateENV(Jira_Ticket,memVal,teamVal,envVal,durVal,timezone,servers,ReqPri
 				elif (serverRequest =="CCP"):
 					#print "---IN CAT CCP"
 					serverRequest=["CUT05"];
-				elif (serverRequest =="SANCTION"):
-					#print "---IN CAT SANCTION"
+				elif (serverRequest =="SANCTIONS"):
+					#print "---IN CAT SANCTIONS"
 					serverRequest=["CUT02"];
 				elif (serverRequest =="TEST"):
 					#print "---IN CAT TEST"
@@ -464,7 +464,7 @@ def updateRequestPage(Jira_Ticket,memVal,teamVal,serverRequest,durVal,start_Time
 		elif (serverRequest in["CUT05"]):
 			serverRequest="CCP";
 		elif (serverRequest in["CUT02"]):
-			serverRequest="SANCTION";
+			serverRequest="SANCTIONS";
 		elif (serverRequest in["TEST1","TEST2","TEST3"]):
 			serverRequest="TEST";
 		
@@ -583,7 +583,7 @@ def helpDesc():
 	#print("""\n3.Extend Environment Duration:\nSelect Env & give value Environment Name as in (CUT01, CUT14).\nEnter new Duration.\nSelect change & give value change as e.""");			
 	print("Script Parameters:");
 	print("1. For Allocate: 	Mahesh DEVOPS CUT11 3 default IST default");
-	print("Ex. Env name=CUT11, cut12, CLSNOW::[CUT12,CUT13,CUT14],CCP::[CUT05],SANCTION::[CUT02]");print;
+	print("Ex. Env name=CUT11, cut12, CLSNOW::[CUT12,CUT13,CUT14],CCP::[CUT05],SANCTIONS::[CUT02]");print;
 	print("2. For Release:  	default default TEST3 0 r default default");print;
 	print("3. For Status Change:	default default CUT11 0 o default default");
 	print("Ex. Status name=o,O[OPEN]/m,M[MAINTENANCE]");print;
