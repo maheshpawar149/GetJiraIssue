@@ -84,11 +84,14 @@ def updatejira(Jira_Ticket,dataC,dataD,dataT,dataDC):
 	##for transition
 	if (dataT!=""):
 		print "$$$$$Changing Status"
+		print dataT
 		response = requests.post(server+'/rest/api/2/issue/'+Jira_Ticket+'/transitions?expand=transitions.fields',headers=headers,data=dataT);
 		#print response.content;
 	##FOR Update ENV after Allocation
 	if (dataDC!=""):
+		print "*********************************"
 		print "Changing Env "
+		print dataDC;
 		response = requests.put(server+'/rest/api/2/issue/'+Jira_Ticket,headers=headers,data=dataDC);
 		#print response.content;
 	
@@ -458,15 +461,15 @@ def updateRequestPage(Jira_Ticket,memVal,teamVal,serverRequest,durVal,start_Time
 	
 	servers=[];
 	serverRequestCat=serverRequest;
-	if(ReqPrio=="CatAllocate"):		
-		if (serverRequest in["CUT12","CUT13","CUT14"]):
-			serverRequest="CLSNOW";
-		elif (serverRequest in["CUT05"]):
-			serverRequest="CCP";
-		elif (serverRequest in["CUT02"]):
-			serverRequest="SANCTIONS";
-		elif (serverRequest in["TEST1","TEST2","TEST3"]):
-			serverRequest="TEST";
+	# if(ReqPrio=="CatAllocate"):		
+	# 	if (serverRequest in["CUT12","CUT13","CUT14"]):
+	# 		serverRequest="CLSNOW";
+	# 	elif (serverRequest in["CUT05"]):
+	# 		serverRequest="CCP";
+	# 	elif (serverRequest in["CUT02"]):
+	# 		serverRequest="SANCTIONS";
+	# 	elif (serverRequest in["TEST1","TEST2","TEST3"]):
+	# 		serverRequest="TEST";
 		
 	
 	if ReqType=="REQUESTED":
@@ -544,15 +547,15 @@ def updateRequestPage(Jira_Ticket,memVal,teamVal,serverRequest,durVal,start_Time
 	dataC="";dataD="";dataT="";dataDC="";
 	if (ReqType=="ALLOCATED"): 
 		dataC={"body": "||{color:#008000}START USING ENV.(/){color}||\n\n FROM: %s,%s,\nENV: %s\nFOR:%s hrs"%(memVal,teamVal,serverRequest,durVal),}
-		dataD={"update": {"description": [{"set": "||{color:#008000}REQUEST APPROVED START USING ENV.(/){color}||\n\n |h5. FROM: | |h6. %s,%s,|\n|h5. ENV: | |h6. %s|\n|h5. FOR: | |h6. %s hrs|"%(memVal,teamVal,serverRequest,durVal),}]}}
+		dataD={"update": {"description": [{"set": "||{color:#008000}REQUEST APPROVED START USING ENV.(/){color}||\n\n |h5. FROM: | |h6. %s,%s,|\n|h5. ENV: | |h6. %s|\n|h5. FOR: | |h6. %s hrs|\n|h5. END TIME: | |h6. %s hrs|"%(memVal,teamVal,serverRequest,durVal,end_Time),}]}}
 		dataT={"transition": {"id":"201"}}
-		dataDC={"fields": {"customfield_10208": { "value": durVal }}};
+		dataDC={"fields": {"customfield_10208": { "value": serverRequest }}};
 		updatejira(Jira_Ticket,dataC,dataD,dataT,dataDC);
 		
 	elif (ReqType=="REQUESTED"): 
 		dataC={"body": "||{color:#008000}REQUEST IS ADDED TO QUEUE.(/){color}||\n\n FROM: %s,%s,\nENV: %s\nFOR:%s hrs"%(memVal,teamVal,serverRequest,durVal),}
 		dataD={"update": {"description": [{"set": "||{color:#008000}REQUEST IS ADDED TO QUEUE.(/){color}||\n\n |h5. FROM: | |h6. %s,%s,|\n|h5. ENV: | |h6. %s|\n|h5. FOR: | |h6. %s hrs|"%(memVal,teamVal,serverRequest,durVal),}]}}
-		dataT={"transition": {"id":"201"}}
+		#dataT={"transition": {"id":"201"}}
 		updatejira(Jira_Ticket,dataC,dataD,dataT,dataDC);
 
 	elif (ReqType=="EXTENDED"):
